@@ -6,7 +6,8 @@ import winreg as wr
 import time
 
 LAST_USED_TIME_STOP = "LastUsedTimeStop"
-ROOT_KEY = r"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam"
+CAM_KEY = r"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam"
+MIC_KEY = r"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone"
 
 
 def iterate_leaf(key):
@@ -51,10 +52,13 @@ def iterate_main():
     Returns the name of the application that is using the webcam,
     or None if it is not in use.
     """
-    registry= wr.ConnectRegistry(None, wr.HKEY_CURRENT_USER)
-    with wr.OpenKey(registry, ROOT_KEY) as key:
-        result = iterate_middle_node(key)
-    return result
+    registry = wr.ConnectRegistry(None, wr.HKEY_CURRENT_USER)
+    with wr.OpenKey(registry, CAM_KEY) as key:
+        camera = iterate_middle_node(key)
+    with wr.OpenKey(registry, MIC_KEY) as key:
+        microphone = iterate_middle_node(key)
+        
+    return (camera,microphone)
 
 
 if __name__ == "__main__":
