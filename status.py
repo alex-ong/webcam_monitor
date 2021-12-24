@@ -64,15 +64,21 @@ def check_status(cleanup_entries=True):
         microphone = cleanup(microphone)
     return (camera,microphone)
 
+LOOKUPS = ["discord", "teams", "skype", "obs", "webex", "zoom", "riotclientservices"]
+IGNORES = ["nvcontainer"]
 def cleanup(entries):
-    result = []
-    lookups = ["discord", "teams", "skype", "obs", "webex", "zoom"]
+    result = []    
+    
     for entry in entries:
         matched = False
         lower_entry = entry.lower()
-        for lookup in lookups:
+        for lookup in LOOKUPS:
             if lookup in lower_entry:
                 result.append(lookup)
+                matched = True
+                break
+        for ignore in IGNORES:
+            if ignore in lower_entry:
                 matched = True
                 break
         if not matched:
