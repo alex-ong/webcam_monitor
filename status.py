@@ -47,22 +47,39 @@ def iterate_middle_node(key):
     return result
 
 
-def check_status():
+def check_status(cleanup_entries=True):
     """
     Returns the names of the applications that are using the webcam,
     and the names of the applications that are using the microphone.
+    Passing cleanup=True will use our defined dictionary to cleanup
+    the names of the applications
     """
     registry = wr.ConnectRegistry(None, wr.HKEY_CURRENT_USER)
     with wr.OpenKey(registry, CAM_KEY) as key:
         camera = iterate_middle_node(key)
     with wr.OpenKey(registry, MIC_KEY) as key:
         microphone = iterate_middle_node(key)
-        
+    if cleanup_entries:
+        camera = cleanup(camera)
+        microphone = cleanup(microphone)
     return (camera,microphone)
 
+def cleanup(entries):
+    result = []
+    lookups = ["discord", "teams", "skype", "obs", "webex", "zoom"]
+    for entry in entries:
+        matched = False
+        lower_entry = entry.lower()
+        for lookup in lookups:
+            if lookup in lower_entry:
+                result.append(lookup)
+                matched = True
+                break
+        if not matched:
+            result.append(entry)
+    return result
 
-if __name__ == "__main__":
-
+if __name__ == "__main__": 
     while True:
         print(check_status())
         time.sleep(0.5)
