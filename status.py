@@ -31,26 +31,26 @@ def iterate_middle_node(key):
     Returns name of application currently accessing the webcam.
     """
     num_subkeys, _, __ = wr.QueryInfoKey(key)
-
+    
+    result = []
     for i in range(num_subkeys):
         subkey_name = wr.EnumKey(key, i)
         with wr.OpenKey(key, subkey_name) as subkey:
             if subkey_name == "NonPackaged":
                 sub_result = iterate_middle_node(subkey)
-                if sub_result is not None:
-                    return sub_result
+                result.extend(sub_result)
             else:
                 sub_result = iterate_leaf(subkey)
                 if sub_result:
-                    return subkey_name
+                    result.append(subkey_name)
 
-    return None
+    return result
 
 
-def iterate_main():
+def check_status():
     """
-    Returns the name of the application that is using the webcam,
-    or None if it is not in use.
+    Returns the names of the applications that are using the webcam,
+    and the names of the applications that are using the microphone.
     """
     registry = wr.ConnectRegistry(None, wr.HKEY_CURRENT_USER)
     with wr.OpenKey(registry, CAM_KEY) as key:
@@ -64,5 +64,5 @@ def iterate_main():
 if __name__ == "__main__":
 
     while True:
-        print(iterate_main())
+        print(check_status())
         time.sleep(0.5)
