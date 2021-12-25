@@ -65,7 +65,7 @@ def check_status(cleanup_entries=True):
     return (camera,microphone)
 
 LOOKUPS = ["discord", "teams", "skype", "obs", "webex", "zoom", "riotclientservices"]
-IGNORES = ["nvcontainer"]
+IGNORES = ["nvcontainer", "davinci resolve"]
 def cleanup(entries):
     result = []    
     
