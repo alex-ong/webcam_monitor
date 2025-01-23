@@ -2,6 +2,7 @@
 Simple daemon that prints out
 the current appplication that is using the webcam
 """
+
 import winreg as wr
 import time
 
@@ -31,7 +32,7 @@ def iterate_middle_node(key):
     Returns name of application currently accessing the webcam.
     """
     num_subkeys, _, __ = wr.QueryInfoKey(key)
-    
+
     result = []
     for i in range(num_subkeys):
         subkey_name = wr.EnumKey(key, i)
@@ -62,13 +63,16 @@ def check_status(cleanup_entries=True):
     if cleanup_entries:
         camera = cleanup(camera)
         microphone = cleanup(microphone)
-    return (camera,microphone)
+    return (camera, microphone)
+
 
 LOOKUPS = ["discord", "teams", "skype", "obs", "webex", "zoom", "riotclientservices"]
 IGNORES = ["nvcontainer", "davinci resolve"]
+
+
 def cleanup(entries):
-    result = []    
-    
+    result = []
+
     for entry in entries:
         matched = False
         lower_entry = entry.lower()
@@ -85,7 +89,8 @@ def cleanup(entries):
             result.append(entry)
     return result
 
-if __name__ == "__main__": 
+
+if __name__ == "__main__":
     while True:
         print(check_status())
         time.sleep(0.5)
